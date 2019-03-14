@@ -24,7 +24,7 @@ record Point (board : Board size) where
   row : Fin size
   col : Fin size
 
-||| Propositonal type describing when two points are adjacent.
+||| Propositional type describing when two points are adjacent.
 data Adjacent : Point board -> Point board -> Type where
   LiesNorth : {row : Fin k} ->
               {col : Fin (S k)} ->
