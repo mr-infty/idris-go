@@ -2,6 +2,7 @@ module Primitives
 
 import Data.Fin
 import Data.Vect
+import Generics
 
 %default total
 
@@ -9,6 +10,15 @@ import Data.Vect
 -- for each of the common rulesets (Japanese, Chinese, logical, ...) there should be a different
 -- type, but each of these rulesets/types should be defined in terms of the basic notions introduced
 -- in this module.
+
+||| Abstract game boards given by a type of *points* and a symmetric and irreflexive
+||| relation of *adjacency* on it
+record Board' where
+  constructor MkBoard'
+  ||| the points of the board
+  points : Type
+  ||| the symmetric and irreflexive relation on points that defines adjancency
+  adjRel : SymmIrreflRelOn points
 
 data Color = Black | White -- TODO: Instead of having an "Empty" color, I use 
                            -- the type Maybe Color, with Nothing corresponding
