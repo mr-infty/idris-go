@@ -22,28 +22,28 @@ record Board where
   ||| the points of the board
   points : Type
   ||| the symmetric and irreflexive relation on points that defines adjancency
-  adjRel : points -> points -> Bool
-  --adjRel : points -> points -> Type
-  ||| proof that adjRel is a symmetric and irreflexive relation
-  adjRel_pf : SymmetricIrreflexiveRelation adjRel
-  --adjRel_pf : SymIrrDecRel adjRel
+  adj : points -> points -> Bool
+  ||| proof that adj is a symmetric and irreflexive relation
+  adj_pf : SymmetricIrreflexiveRelation adj
 
+-- The function below is just for convenience, so that one doesn't have to explicitly refer to the board.
 ||| Returns `True` iff points are adjacent
 adjacent : {b : Board} -> (points b) -> (points b) -> Bool
-adjacent {b} = adjRel b
---adjacent : {b : Board} -> (p : points b) -> (q : points b) -> Dec ((adjRel b) p q)
---adjacent {b} p q with (adjRel_pf b)
---  adjacent {b} p q | with_pat = decRel {rel=adjRel b} p q
+adjacent {b} = adj b
+
+-- TODO: Delete this?
+adjacent_is_adj : {b : Board} -> (adjacent p q = (adj b) p q)
+adjacent_is_adj = Refl
 
 -- TODO: Delete this?
 adjacentIsSymmetric : {b : Board} -> (p : points b) -> (q : points b) -> (adjacent p q = adjacent q p)
-adjacentIsSymmetric {b} p q with (adjRel_pf b)
-  adjacentIsSymmetric {b} p q | with_pat = sym {f=adjRel b}
+adjacentIsSymmetric {b} p q with (adj_pf b)
+  adjacentIsSymmetric {b} p q | with_pat = sym {f=adj b}
 
 -- TODO: Delete this?
 adjacentIsIrreflexive : {b : Board} -> (p : points b) -> (adjacent p p = False)
-adjacentIsIrreflexive {b} p with (adjRel_pf b)
-  adjacentIsIrreflexive {b} p | with_pat = irrefl {rel=adjRel b}
+adjacentIsIrreflexive {b} p with (adj_pf b)
+  adjacentIsIrreflexive {b} p | with_pat = irrefl {rel=adj b}
 
 data Color = Black | White -- TODO: Instead of having an "Empty" color, I use 
                            -- the type Maybe Color, with Nothing corresponding
