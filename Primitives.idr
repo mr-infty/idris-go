@@ -22,72 +22,28 @@ record Board where
   ||| the points of the board
   points : Type
   ||| the symmetric and irreflexive relation on points that defines adjancency
-  adj : points -> points -> Bool
-  ||| proof that adj is a symmetric and irreflexive relation
-  adj_pf : SymmetricIrreflexiveRelation adj
+  adjRel : SymmIrreflRelOn points
 
--- The function below is just for convenience, so that one doesn't have to explicitly refer to the board.
-||| Returns `True` iff points are adjacent
-adjacent : {b : Board} -> (points b) -> (points b) -> Bool
-adjacent {b} = adj b
-
--- TODO: Delete this?
-adjacent_is_adj : {b : Board} -> (adjacent p q = (adj b) p q)
-adjacent_is_adj = Refl
-
--- TODO: Delete this?
-adjacentIsSymmetric : {b : Board} -> (p : points b) -> (q : points b) -> (adjacent p q = adjacent q p)
-adjacentIsSymmetric {b} p q with (adj_pf b)
-  adjacentIsSymmetric {b} p q | with_pat = sym {f=adj b}
-
--- TODO: Delete this?
-adjacentIsIrreflexive : {b : Board} -> (p : points b) -> (adjacent p p = False)
-adjacentIsIrreflexive {b} p with (adj_pf b)
-  adjacentIsIrreflexive {b} p | with_pat = irrefl {rel=adj b}
+--standardGoBoard : (n : Nat) -> Board
+--standardGoBoard n = MkBoard (Fin n, Fin n) taxi_adj taxi_adj_pf where
+--  taxi_adj : (Fin n, Fin n) -> (Fin n, Fin n) -> Bool
+--  taxi_adj (x, y) (x', y') = let i = finToInteger x
+--                                 j = finToInteger y
+--                                 i' = finToInteger x'
+--                                 j' = finToInteger y' in
+--                                 abs (i-i') + abs (j-j') == 1
+--  SymmetricFunction taxi_adj where
+--    sym = ?hole1
+--  IrreflexiveRelation taxi_adj where
+--    irrefl = ?hole2
+--  taxi_adj_pf : SymmetricIrreflexiveRelation taxi_adj
+--  taxi_adj_pf = ?taxi_adj_pf_rhs
 
 data Color = Black | White -- TODO: Instead of having an "Empty" color, I use 
                            -- the type Maybe Color, with Nothing corresponding
                            -- to an empty tile. Is that reasonable?
 
-data Board' : Nat -> Type where
-  MkBoard' : (size : Nat) -> Board' size
-
-||| Points on a board.
-||| @ board the board on which the point lies
-record Point (board : Board' size) where
-  constructor MkPoint
-  row : Fin size
-  col : Fin size
-
-||| Propositional type describing when two points are adjacent.
-data Adjacent : Point board -> Point board -> Type where
-  LiesNorth : {row : Fin k} ->
-              {col : Fin (S k)} ->
-              Adjacent (MkPoint (FS row) col)
-                       (MkPoint (weaken row) col)
-  LiesWest : {row : Fin (S k)} ->
-             {col : Fin k} ->
-             Adjacent (MkPoint row (weaken col))
-                      (MkPoint row (FS col))
-  LiesSouth : {row : Fin k} ->
-              {col : Fin (S k)} ->
-              Adjacent (MkPoint (weaken row) col)
-                       (MkPoint (FS row) col)
-  LiesEast : {row : Fin (S k)} ->
-             {col : Fin k} ->
-             Adjacent (MkPoint row (weaken col))
-                      (MkPoint row (FS col))
-
-interface BoardState' (size : Nat) (board : Board' size) ty where
-  emptyBoard' : ty
-  getTileColor : ty -> (row : Fin size) -> (col : Fin size) -> Maybe Color
-  setTileColor : ty -> (Maybe Color) -> (row : Fin size) -> (col : Fin size) -> ty
-
--- Standard implementation (TODO: Move this somewhere else)
-SimpleBoardState' : Board' size -> Type
-SimpleBoardState' (MkBoard' size) = Vect size (Vect size (Maybe Color))
-    
-BoardState' size (MkBoard' size) (SimpleBoardState' (MkBoard' size)) where
-  emptyBoard' {size} = replicate size (replicate size Nothing)
-  getTileColor bs row col = index row (index col bs)
-  setTileColor bs x row col = updateAt row (replaceAt col x) bs
+interface BoardState (board : Board) ty where
+  emptyBoard : ty
+  getTileColor : ty -> points board -> Maybe Color
+  setTileColor : ty -> (Maybe Color) -> points board -> ty

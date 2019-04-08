@@ -3,10 +3,14 @@ module Generics
 %default total
 %access public export
 
-interface SymmetricFunction (f : ty -> ty -> ty') where
-  sym : {x : ty} -> {y : ty} -> (f x y = f y x)
+interface Relation (rel : ty -> ty -> Type) where
+  elim : (r : rel x y) -> (r' : rel x y) -> (r = r')
 
-interface IrreflexiveRelation (rel : ty -> ty -> Bool) where
-  irrefl : (rel x x = False)
+interface Relation rel => SymmetricRelation (rel : ty -> ty -> Type) where
+  sym : rel x y -> rel y x
 
-interface (SymmetricFunction rel, IrreflexiveRelation rel) => SymmetricIrreflexiveRelation (rel : ty -> ty -> Bool) where
+interface Relation rel => IrreflexiveRelation (rel : ty -> ty -> Type) where
+  irrefl : rel x x -> Void
+
+SymmIrreflRelOn : Type -> Type
+SymmIrreflRelOn ty = Subset (ty -> ty -> Type) (\rel => (SymmetricRelation rel, IrreflexiveRelation rel))
