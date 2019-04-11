@@ -22,7 +22,7 @@ record Board where
   ||| the points of the board
   points : Type
   ||| the symmetric and irreflexive relation on points that defines adjancency
-  adjRel : SymmIrreflRelOn points
+  adjRel : DiscreteMetricOn points
 
 --standardGoBoard : (n : Nat) -> Board
 --standardGoBoard n = MkBoard (Fin n, Fin n) taxi_adj taxi_adj_pf where
