@@ -29,7 +29,21 @@ taxi_dec (i,j) (i',j') = let i = finToInteger i
                              j' = finToInteger j' in
                              decEq (abs(i-i') + abs(j-j')) 1
 
-abs_lemma_1 : {i : Integer} -> So (i < 0) -> abs i = i
+----This works too
+--abs_lemma_1 : {i : Integer} -> So (not (i < 0)) -> abs i = i
+--abs_lemma_1 {i} pf with (i < 0)
+--  abs_lemma_1 {i} _ | False = Refl
+--  abs_lemma_1 {i} Oh | True impossible
+
+abs_lemma_1 : {i : Integer} -> (i < 0 = False) -> abs i = i
+abs_lemma_1 {i} prf with (i < 0)
+  abs_lemma_1 {i} Refl | True impossible
+  abs_lemma_1 {i} _ | False = Refl
+
+abs_lemma_1' : {i : Integer} -> (i < 0 = True) -> abs i = -i
+abs_lemma_1' {i} prf with (i < 0)
+  abs_lemma_1' {i} Refl | False impossible
+  abs_lemma_1' {i} _ | True = Refl
 
 abs_lemma_2 : {i : Integer} -> abs i = abs (-i)
 abs_lemma_2 {i} = if i < 0 then ?abs_lemma_1_rhs
